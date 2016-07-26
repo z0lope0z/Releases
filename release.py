@@ -104,9 +104,9 @@ def release_notes(last_tag, version):
 def update_tickets(last_tag, current_version):
     subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='Backlog'".format(last_tag), shell=True)
     subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='Ready for Dev'".format(last_tag), shell=True)
-    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='In Development'".format(last_tag), shell=True)
-    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='Code Review'".format(last_tag), shell=True)
-    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='QA Review'".format(last_tag), shell=True)
+    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='in development'".format(last_tag), shell=True)
+    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='code review'".format(last_tag), shell=True)
+    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='qa review'".format(last_tag), shell=True)
     subprocess.check_output("git log {0}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --fix-version='{1}'".format(last_tag, current_version), shell=True)
 
 parser = optparse.OptionParser()
@@ -114,16 +114,20 @@ parser.add_option("-t", "--last-tag", dest="last_tag", help="the last tagged ver
 parser.add_option("-b", "--branch", dest="branch", help="the branch that you want to release")
 opts, args = parser.parse_args()
 
+branch = opts.branch or 'development'
+
 print "Making sure that the branch is up to date..\n"
 checkout(branch)
 
 v, v_new = version()
 print "Your current version: " + v
 print "Your new version: " + v_new
-branch = opts.branch or 'development'
 new_notes = release_notes(opts.last_tag, v)
 
 print "Releasing with the release notes: " + new_notes + "\n"
+
+raw_input("Press enter to confirm that you have read the new release notes")
+
 build_release()
 print "Updating tickets.."
 update_tickets(opts.last_tag, v)
