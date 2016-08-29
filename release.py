@@ -47,11 +47,11 @@ def checkout(branch):
 # execute the gradle task
 def build_release():
     nav_bee()
-    os.system("gradle assembleRelease crashlyticsUploadDistributionDevelopmentRelease crashlyticsUploadDistributionStagingRelease crashlyticsUploadDistributionProductionRelease  --stacktrace")
+    os.system("./gradlew assembleRelease crashlyticsUploadDistributionDevelopmentRelease crashlyticsUploadDistributionStagingRelease crashlyticsUploadDistributionProductionRelease  --stacktrace")
 
 def build_debug():
     nav_bee()
-    os.system("gradle assembleDebug")
+    os.system("./gradlew assembleDebug")
 
 def tag(v, branch):
     nav_bee()
