@@ -103,9 +103,8 @@ def release_notes(last_tag, version):
 
 def update_tickets(last_tag, current_version):
     subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='Backlog'".format(last_tag), shell=True)
-    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='Ready for Dev'".format(last_tag), shell=True)
-    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='in development'".format(last_tag), shell=True)
-    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='code review'".format(last_tag), shell=True)
+    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='start development'".format(last_tag), shell=True)
+    subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='for code review'".format(last_tag), shell=True)
     subprocess.check_output("git log {}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --transition='qa review'".format(last_tag), shell=True)
     subprocess.check_output("git log {0}..HEAD | grep -o -E '[A-Z]+-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort | uniq | xargs -n 1 jira-cli update --fix-version='{1}'".format(last_tag, current_version), shell=True)
 
