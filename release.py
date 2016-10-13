@@ -32,6 +32,21 @@ def upload_drive(drive, directory, version, folder):
         f.SetContentFile(directory + 'HBDroidBee-' + release_type + '-v' + version + '.apk') # Read local file
         f.Upload()
 
+def rebase_branches(branch, rebase_branch):
+    nav_bee()
+    _rebase(branch, rebase_branch)
+    os.chdir('../HB-Droid-Core/')
+    _rebase(branch, rebase_branch)
+
+def _rebase(branch, rebase_branch):
+    os.system('git checkout {}'.format(branch))
+    os.system('git pull')
+    os.system('git checkout {}'.format(rebase_branch))
+    os.system('git pull')
+    os.system('git checkout {}'.format(branch))
+    os.system('git merge {}'.format(rebase_branch))
+    os.system('git push origin {}'.format(branch))
+
 def checkout(branch):
     # make sure that we've fetched everything
     nav_bee()
@@ -111,12 +126,18 @@ def update_tickets(last_tag, current_version):
 parser = optparse.OptionParser()
 parser.add_option("-t", "--last-tag", dest="last_tag", help="the last tagged version")
 parser.add_option("-b", "--branch", dest="branch", help="the branch that you want to release")
+parser.add_option("-r", "--rebase-from", dest="rebase_branch", help="the branch that you want to rebase against")
 opts, args = parser.parse_args()
 
 branch = opts.branch or 'development'
+rebase_branch = opts.rebase_branch
 
 print "Making sure that the branch is up to date..\n"
 checkout(branch)
+
+if rebase_branch:
+    print "Rebasing branch..\n"
+    rebase_branches(branch, rebase_branch)
 
 v, v_new = version()
 print "Your current version: " + v
