@@ -82,9 +82,9 @@ def tag(v, branch):
 
 def update_version(v_new, branch):
     nav_bee()
-    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep versionBuild | grep -o -E '\d.*$'", shell=True).strip()
+    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionBuild' | grep -o -E '\d.*$'", shell=True).strip()
     v_build_new = int(v_build) + 1
-    update_build = "sed -i '' 's/versionBuild[[:space:]][[:digit:]]*/versionBuild {}/g' HBDroidBee/build.gradle".format(v_build_new)
+    update_build = "sed -i '' 's/def[[:space:]]appVersionBuild[[:space:]]=[[:space:]][[:digit:]]*/def appVersionBuild = {}/g' HBDroidBee/build.gradle".format(v_build_new)
     subprocess.call(update_build, shell=True)
     os.system('git add -A')
     os.system('git commit -m "update version to ' + v_new + '"')
@@ -94,10 +94,10 @@ version_format = "{0}.{1}.{2}.{3}"
 
 def version():
     nav_bee()
-    v_major = subprocess.check_output("cat HBDroidBee/build.gradle | grep versionMajor | grep -o -E '\d.*$'", shell=True).strip()
-    v_minor = subprocess.check_output("cat HBDroidBee/build.gradle | grep versionMinor | grep -o -E '\d.*$'", shell=True).strip()
-    v_patch = subprocess.check_output("cat HBDroidBee/build.gradle | grep versionPatch | grep -o -E '\d.*$'", shell=True).strip()
-    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep versionBuild | grep -o -E '\d.*$'", shell=True).strip()
+    v_major = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionMajor' | grep -o -E '\d.*$'", shell=True).strip()
+    v_minor = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionMinor' | grep -o -E '\d.*$'", shell=True).strip()
+    v_patch = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionPatch' | grep -o -E '\d.*$'", shell=True).strip()
+    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionBuild' | grep -o -E '\d.*$'", shell=True).strip()
     v = version_format.format(v_major, v_minor, v_patch, v_build)
     v_new = version_format.format(v_major, v_minor, v_patch, int(v_build) + 1)
     return (v, v_new)
@@ -140,6 +140,7 @@ if rebase_branch:
     rebase_branches(branch, rebase_branch)
 
 v, v_new = version()
+
 print "Your current version: " + v
 print "Your new version: " + v_new
 new_notes = release_notes(opts.last_tag, v)
