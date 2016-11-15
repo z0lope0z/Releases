@@ -82,7 +82,7 @@ def tag(v, branch):
 
 def update_version(v_new, branch):
     nav_bee()
-    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionBuild' | grep -o -E '\d.*$'", shell=True).strip()
+    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionBuild' | head -1 | grep -o -E '\d.*$'", shell=True).strip()
     v_build_new = int(v_build) + 1
     update_build = "sed -i '' 's/def[[:space:]]appVersionBuild[[:space:]]=[[:space:]][[:digit:]]*/def appVersionBuild = {}/g' HBDroidBee/build.gradle".format(v_build_new)
     subprocess.call(update_build, shell=True)
@@ -97,7 +97,7 @@ def version():
     v_major = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionMajor' | grep -o -E '\d.*$'", shell=True).strip()
     v_minor = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionMinor' | grep -o -E '\d.*$'", shell=True).strip()
     v_patch = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionPatch' | grep -o -E '\d.*$'", shell=True).strip()
-    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionBuild' | grep -o -E '\d.*$'", shell=True).strip()
+    v_build = subprocess.check_output("cat HBDroidBee/build.gradle | grep 'def appVersionBuild' | head -1 | grep -o -E '\d.*$'", shell=True).strip()
     v = version_format.format(v_major, v_minor, v_patch, v_build)
     v_new = version_format.format(v_major, v_minor, v_patch, int(v_build) + 1)
     return (v, v_new)
